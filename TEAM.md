@@ -190,18 +190,20 @@ Vai: **Sản phẩm và kinh doanh** (TV3). File: `config/acceptance_criteria.js
 
 - Câu 1.1: viết mục tiêu cấp hệ thống cho trợ lý hoàn tiền giao trễ, dựa trên PRD v1.1 của Lab 9 (§3) và luồng ghi tiền, ghi lỗi hãng của Lab 10. Đã dùng AI để đọc yêu cầu và soát câu chữ.
 - Câu 1.4: thiết kế telemetry theo ca cho lỗi hãng thiếu căn cứ, dùng log ghi lỗi, tracking và chính sách; nêu công thức, ngưỡng báo động và điểm mù. Đã dùng AI để soát thước đo và cách tính.
-- Câu 1.6: dự thảo ngưỡng chấp nhận, bốn quy tắc quyết định và điều kiện dừng từ dữ liệu vận hành của lab; chưa ký khi các mục Phiếu A của đồng đội còn trống. Đã dùng AI để soát câu chữ và cấu trúc JSON.
-- Câu 2.3: lập bản đồ nguồn dữ liệu và kịch bản đổi từ REFUND-v3 sang REFUND-v4 ngày 01/12/2026; chỉ rõ cờ phiên bản chậm cập nhật có thể gây lỗi hãng oan. Đã dùng AI để đối chiếu Phiếu B với dữ liệu mock và luồng chọn chính sách.
+- Câu 1.6: dự thảo ngưỡng chấp nhận, bốn quy tắc quyết định và điều kiện dừng từ dữ liệu vận hành của lab. Lúc dự thảo, các mục Phiếu A của đồng đội còn trống nên chưa ký; sau khi bàn bổ sung, TV1 ký tiêu chí lúc 15:46:54 ngày 19/11/2026 rồi tạo commit `1850257`. Tôi đã kiểm tra hash JSON khớp `acceptance_criteria.lock`; không sửa tiêu chí sau khi ký. Đã dùng AI để soát câu chữ và cấu trúc JSON.
+- Câu 2.3: tôi lập bản đồ nguồn dữ liệu và kịch bản đổi từ REFUND-v3 sang REFUND-v4 ngày 01/12/2026 trong commit `a76a77e`. Bản Phiếu B cuối do nhánh `tv1-hai` điền cùng chủ đề, được giữ nguyên khi gộp để bảo toàn bản chốt vòng 1; không nhận bản cuối là phần tôi tự viết. Đã dùng AI để đối chiếu dữ liệu mock và luồng chọn chính sách.
+- Câu 2.9 và quyết định v1: B7.4, `business` và B8 đã có trong commit nhóm `96bed0e`. Tôi đã đối chiếu tĩnh các khóa với ngưỡng đã ký và `ops_limits`, `ops_facts`; chưa có `runs/` trong checkout để kiểm độc lập các con số report ghi ở B8. Không nhận các mục này là phần tôi tự điền.
 
 ### Bằng chứng
 
-- `templates/form-a-criteria.md`, mục A1, câu 1.1. Mã commit bổ sung khi bàn lưu phần việc lên repo.
-- `templates/form-a-criteria.md`, mục A2 cột Telemetry production và mục A4; `config/acceptance_criteria.json` (bản dự thảo, chưa có `.lock`).
-- `templates/form-b-evaluation-gates.md`, mục B3; đối chiếu `data/world.json` mục `policies`, `orders[].parcels` và `lab10/agent.py` phần chọn chính sách. Đây là phân tích kịch bản, chưa phải kết quả eval.
+- Commit `fcd424a`: `templates/form-a-criteria.md` mục A1 câu 1.1, A2 cột Telemetry production, A4; `config/acceptance_criteria.json` trước ký. Commit ký `1850257` và `config/acceptance_criteria.lock` nằm trong lịch sử chung.
+- Commit `a76a77e`: bản nháp B3; bản nhóm hiện ở `templates/form-b-evaluation-gates.md` mục B3. Đối chiếu với `data/world.json` phần `policies`, `orders[].parcels` và `lab10/agent.py` phần chọn chính sách; đây là kịch bản drift, không phải kết quả eval.
+- Phiếu B mục B7.4, B8 và `config/operating_gates.json` phần `business` là bằng chứng nội dung vòng 1 của nhóm; cần report trong `runs/` để kiểm lại số đo khi gom bài.
 
 ### Exit ticket
 
-Một điều học được, một điều còn chưa chắc.
+- **Điều học được:** Ngày hiệu lực của chính sách mới là căn cứ chọn phiên bản; cờ `index_active` có thể chậm cập nhật và làm cùng tracking sinh ra quyết định tiền hoặc lỗi hãng sai.
+- **Điều còn chưa chắc:** Chưa có thẻ sự cố được Lab Coach xác nhận và chưa có artefact `runs/` trong checkout, nên chưa thể kết luận v1 chịu được sự cố hay ra quyết định v2. Cần đo ba mốc và đối soát chi phí, hàng chờ trên dữ liệu pilot thật.
 
 ## NguyenLeTrongManh-2A202603857
 
