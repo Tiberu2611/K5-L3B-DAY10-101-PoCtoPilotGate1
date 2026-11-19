@@ -99,15 +99,54 @@ Vai: **Kỹ sư cổng** (TV1). File: `lab10/guards.py`; chạy lệnh 2, 4, 5, 
 
 ### Đóng góp cụ thể
 
-...
+Người thực hiện: **Nguyễn Đức Hải — 2A202603899**, thành viên 1, vai Kỹ sư cổng. Làm trên nhánh `tv1-hai` (vòng 1) và `vong2` (vòng 2), gộp vào `main` qua PR #4.
+
+| # | Đầu việc TV1 | Phần đã thực hiện và trạng thái |
+|--:|---|---|
+| 1 | 1.3, A2 cột Offline | **Xong.** Metric offline cho bước **ghi lỗi hãng**: tỉ lệ dòng `file_carrier_fault` ghi sai (sai kiện, sai hãng, hoặc `carrier_at_fault` = sai theo độ trễ DB và chính sách hiệu lực), nhãn sinh từ `orders[].parcels` + `policies`, có cách xử lý ca thiếu dữ liệu, ghi trùng và điểm mù. |
+| 2 | 1.5, A3 | **Xong.** Chọn **(b)**: Y chỉ hơn X 1/50 lần chạy và 1,0 nằm trong CI 95% [0,94; 1,0] của X, nên chưa đủ căn cứ nói Y tốt hơn. |
+| 3 | 2.1, B0 dòng 1, B1 | **Xong.** Chạy mốc base sau khi tiêu chí đã ký và push: pass_rate 0,9909 [0,9727; 1,0], pass_k 0,9545; `[CHƯA]` ở hoàn sai 20.000đ và 1 lỗi hãng oan (cùng từ `T-002@55`); xấu nhất kho HCM / hãng VNX. Khuyến nghị **kết hợp**: tự chặn cứng khi một chỉ số an toàn > 0, còn lại do người duyệt ký. |
+| 4 | 2.6 ★, `guards.py`, B7.1 | **Xong.** 4 cổng phòng ngừa, không xử lý theo mã ticket: **C0** `pre_guard` ghim chính sách theo ngày hiệu lực; **C1** `issue_refund` tính lại tiền theo tracking DB, chặn hoàn trùng theo sổ cái, chặn bên trả ≠ LOGIX, kiểm phê duyệt (đơn, `status`, hạn, `max_vnd`, người đứng tên, chưa dùng), trần 300.000đ/khách/ngày; **C2** `file_carrier_fault` chỉ ghi đúng kiện trễ, đúng hãng, có nguyên nhân, ≤ 2 lỗi/hãng/ngày; **C3** `notify_carrier` chỉ gửi `carrier_notice_fields`. Bộ nền after: pass_rate 0,9909 → 1,0, không ca mới hỏng, 13 tests OK. |
+| 5 | Chốt vòng 1, B8 bằng chứng | **Xong.** `lab10.checkpoint` → `ĐÃ CHỐT … 291925dd`; mốc prepared đạt cả 9 ngưỡng đã ký; đưa ba bằng chứng có mã lần chạy vào B8; commit và push lúc 15:54. |
+| 6 | 3.0, C1 | **Xong.** Cổng vòng 1 đỡ toàn bộ phần nhìn thấy của thẻ S8 (prepared = after): hoàn sai 6.845.000đ → 0, 35 lỗi oan → 0, kiểm lại 100% → 10%, 36 ca ùn → 0; không còn dòng vượt trần; sự cố nằm trong pre-mortem B6 và HAZOP B4 (dòng `approval_id` INVALID). Ghi thêm hai lý do còn thiếu. |
+| 7 | 3.4, C6 | **Xong.** Fault tree trước khi sửa: 3 nhánh ở 3 tầng (quyền hạn: phê duyệt hỏng; kinh doanh: vượt trần khách/ngày; vận hành/con người: kiểm tay 100%, nhánh VÀ), lá nào cũng có `ticket@seed` hoặc dòng report, kèm ca đối chứng `S8-05@11`. |
+| 8 | 3.5 ★, sửa code, C7 | **Xong.** `_approval_ok` kiểm thêm `ticket_id` và `customer_id` của phê duyệt (thẻ: "có mã em cấp cho ticket khác"). Gói nhìn thấy không có ca này nên đã kiểm bằng `--adhoc` trên `O-2805`: ở prepared, mã A-2805 của ticket khác vẫn hoàn 230.000đ; ở after thì `escalated`, 0 dòng sổ cái. Ghi rõ cổng **ngăn** hay **giảm** cho từng nhánh. |
+| 9 | 3.7, C10 risk register | **Xong.** 2 dòng: bảng `approvals` cập nhật chậm (PIC NV-HANH, dấu hiệu `approval_rejected_rate` > 0); nhân viên quay lại kiểm tay (PIC NV-TUNG, dấu hiệu `auto_decision_recheck_rate` > 0,50). Mỗi dòng có điều kiện đổi quyết định. |
+| 10 | Lệnh 7, push bài cuối | **Xong.** `check_submission --collect` → `ĐỦ THÀNH PHẦN`; commit bài nộp, push `vong2`, gộp vào `main` qua PR #4. |
+
+**Hỗ trợ chung cho bàn:** gộp bài của TV3, TV4 vào `tv1-hai` trước khi ký (A2 giữ cả cột Offline của TV1 và cột Telemetry của TV3); chạy các lệnh trên máy của bàn khi các bạn cần.
+
+**Sử dụng AI:** Có dùng Claude Code để đọc đề, code và dữ liệu mock; viết và chạy thử cổng trong `guards.py`; chạy lệnh 2, 4, 5, 7; soạn nháp các mục phiếu của TV1. Mọi cổng so với nguồn sự thật trong repo, không xử lý theo mã ticket.
 
 ### Bằng chứng
 
-Mã commit, mã lần chạy (`runs/<mã>`), dòng trong phiếu.
+- **Commit:**
+  - `656ec5d` (15:30): câu 1.3, 1.5 ở Phiếu A.
+  - `672b528`: gộp nhánh TV3, TV4 vào `tv1-hai`.
+  - `b898b8f`: Phiếu A, gộp A2.
+  - `1850257` "Sign acceptance criteria": ký 15:46:54, commit 15:47:02, push trước lần chạy đầu 15:47:10. Hash tiêu chí `75be12e3`.
+  - `96bed0e` (15:54): "LAB 10: chốt cổng vòng 1, quyết định v1".
+  - `031dcdd` (17:10): bài nộp vòng 2, gộp vào `main` qua PR #4 (`364a615`).
+- **Mã lần chạy vòng 1:**
+  - base `R-base-before-20261119-154710-b45eeb`
+  - thử cổng `R-base-after-20261119-154843-3c1c70`
+  - prepared `R-base-prepared-20261119-154943-3c1c70` (cả 9 ngưỡng `[ĐẠT ]`)
+  - chốt vòng 1 `291925dd`
+- **Mã lần chạy vòng 2 (thẻ S8):**
+  - grade đầu, trước khi sửa: `R-S8-grade-20261119-164441-fd4774`
+  - sau khi sửa `_approval_ok`: `R-S8-after-20261119-165647-22d052`, bộ nền `R-base-after-20261119-165648-22d052`
+  - grade cuối: `R-S8-grade-20261119-165948-038d52`, **PASS-VISIBLE** (integrity, criteria, visible, regression, monitor ✅); bộ nền 0,9909 → 1,0, không ca mới hỏng
+- **Phiếu:**
+  - Phiếu A: A2 (cột Offline), A3, A5.
+  - Phiếu B: B0, B1, B7.1, B8 (bằng chứng).
+  - Phiếu C: C1, C6, C7 (phần code), C10.
+- **Code:** `lab10/guards.py` (C0–C3 và nhánh vòng 2 trong `_approval_ok`); bản chốt `lab10/guards_round1.py`. Trong `guards.py` không có mã ticket hay mã đơn nào (`grep -nE "T-0|O-1|C-0"` rỗng).
+- **Test:** `python3 -m unittest discover -s tests` → 13 tests OK (sau cổng vòng 1 và sau sửa vòng 2).
 
 ### Exit ticket
 
-Một điều học được, một điều còn chưa chắc.
+- **Điều học được:** Cổng tốt không cố "đoán đúng hơn model" mà so mỗi lệnh ghi với nguồn sự thật (tracking, chính sách theo ngày, sổ cái, bảng phê duyệt) trước khi ghi. Nhờ vậy, cổng vòng 1 viết từ HAZOP (dòng `approval_id` INVALID) đã đỡ được gần hết thẻ S8 trước khi biết thẻ.
+- **Điều còn chưa chắc:** Bài kiểm tra ẩn có ca nào cổng chưa phủ không. Cổng phê duyệt chỉ đúng khi bảng `approvals` đúng (mã thu hồi mà chưa sửa `status` vẫn lọt). Trần 300.000đ/khách/ngày đang cộng cả các khoản hoàn ngày cũ trong sổ cái, nên có thể chuyển người dư.
 
 ## VuVanChu-2A202603873
 
@@ -134,38 +173,37 @@ Người thực hiện: **Vũ Văn Chủ — 2A202603873**, thành viên 2, vai 
 
 | # | Đầu việc TV2 | Phần đã thực hiện và trạng thái |
 |--:|---|---|
-| 1 | 1.6(d), A4 | Đã viết hai ranh giới: không lấy số ngày khách khai làm căn cứ ghi tiền/lỗi hãng; chuyển người khi vượt hạn mức mà thiếu phê duyệt hợp lệ. Giải thích ngưỡng trên 200.000đ theo REFUND-v3/ngày mock, cần tra lại khi chính sách đổi. |
-| 2 | 2.2, B2 | Đã điền đủ ba phần soát lỗi `T-002@55`: hoàn sai 20.000đ và lỗi oan VNX cùng bắt nguồn từ `model_override` 2→5 ngày. Nguồn là code, DB và trace mẫu phát sẵn; chưa chạy trace thực tế vì chưa ký tiêu chí. |
-| 3 | 2.5, B6 | Đã ghi bản pre-mortem đủ bốn lăng kính, năm lý do và chọn ba cổng đề xuất; có nguồn dữ liệu và người phụ trách triển khai theo phân công. Bản ghi chờ cả bàn rà soát, không khẳng định đã họp hoặc cài cổng. |
-| 4 | 2.7, B7.2 | Đã viết hai bước chống chỉnh theo bộ chấm: dùng bộ nền cho phát triển/regression, giữ mốc prepared trước khi xem thẻ và giữ test ẩn độc lập. |
-| 5 | 2.8, B7.3 | Đã phát biểu tính chất, soạn hai ticket mới trên O-1002/C-02 và O-1004/C-04, có lệnh adhoc/seed và kết quả mong đợi theo tracking. Chờ ký tiêu chí để chạy thực tế; chưa kết luận đạt. |
-| 6 | 3.0, nhận thẻ/C0 | Chờ số thẻ S1–S8 được giao, tiêu chí đã ký/commit/push và bản chốt vòng 1. Chưa lấy thẻ hoặc chạy grade; không tự chọn số thẻ. |
-| 7 | 3.1, C2 | Đã ghi cách chọn hai lỗi có nguồn khác nhau từ report và dò đúng seed; chưa có thẻ/report để điền bằng chứng. Không dùng hai hậu quả cùng nguồn ở B2 thay cho yêu cầu của C2. |
-| 8 | 3.6, monitors/C8 | Đã cài và đăng ký `model_override_rate`, điền đủ thước đo → dữ liệu → cách tính, cảnh báo và điểm mù. Đã kiểm thử sự kiện tổng hợp; cần thẻ thật của nhóm để xác nhận metric phân biệt thẻ với bộ nền hoặc bổ sung tín hiệu đúng thẻ. |
-| 9 | 3.7, C9 | Đã ghi rõ điều kiện hoàn tất và giới hạn của monitor; chờ cây trước C6, các sửa đổi C7 và report after. Chưa khẳng định cổng đã ngăn nhánh nào khi `guards.py` còn mặc định. |
-| 10 | submission.json | Đã điền tên repo và đủ bốn thành viên theo bảng TEAM. `incident` chờ số thẻ; v1/v2 và ba dòng bắt buộc chờ TV3 chốt ở B8/C12 để sao chép nguyên văn, không quyết định thay nhóm. |
+| 1 | 1.6(d), A4 | **Xong.** Hai câu ranh giới đầu ra: không lấy số ngày khách khai làm căn cứ ghi tiền/lỗi hãng; chuyển người khi vượt hạn mức tự động (200.000đ, REFUND-v3) mà thiếu phê duyệt hợp lệ. Bản trên `main` giữ ô 1.6(d) của TV2 khi gộp. |
+| 2 | 2.2, B2 | **Xong.** Bảng soát lỗi `T-002@55` đủ ba phần, dựa trên trace thật: bước 03 `model_override {"db": 2, "ticket": 5}` dẫn tới hoàn sai 20.000đ và một lỗi oan cho VNX; cả hai xếp là **lỗi chìm**, nguồn: đầu vào và thứ bậc hệ thống. |
+| 3 | 2.5, B6 | **Xong.** Pre-mortem đủ bốn lăng kính, 7 lý do; đánh dấu ★ 3 lý do thành cổng (tin số khách khai → C1/C2; nhân viên mất tin → config `decision_note`/kiểm mẫu; lộ PII người nhận quà → C3). |
+| 4 | 2.7, B7.2 | **Xong.** Hai bước: (1) cổng chỉ so với nguồn sự thật, không chứa mã ticket hay câu chữ (`grep` rỗng); (2) giữ ticket hiểm trên đơn ngoài bộ nền và đo gói sự cố ở mốc prepared trước khi sửa. |
+| 5 | 2.8, B7.3 | **Xong.** Tính chất: tiền, lỗi hãng, thông báo chỉ theo tracking và không lộ dữ liệu người nhận. Hai ticket hiểm chạy `--adhoc` ở base và after: `O-1004`/`C-04` (base hoàn 33.000đ → after `SỔ CÁI: []`); `O-1026`/`C-10`, đơn quà (base hoàn 42.000đ, gửi SĐT người nhận → after 20.000đ, chỉ gửi 4 trường). |
+| 6 | 3.0, nhận thẻ, C0 | **Xong.** Nhận thẻ **S8** (commit `a0163b6`, 4 file trong `incidents/S8/`); chạy lệnh 6 **trước khi sửa**: `R-S8-grade-20261119-164441-fd4774`, `1 integrity ✅`; ghi `Thẻ đã bốc: S8` và bảng nhật ký 4 lần chạy ở C0. |
+| 7 | 3.1, C2 | **Xong.** Tác hại của thẻ và 3 lỗi có nguồn khác nhau: `S8-01@11` (dùng mã A-2801 `used`, **lỗi chìm**), `S8-43@11` (khách C-16 vượt 300.000đ/ngày, lỗi ngữ cảnh), `S8-62@11` (quyết định đúng nhưng bị kiểm lại, chờ 38 phút, lỗi ngữ cảnh). |
+| 8 | 3.6 ★, monitors, C8 | **Xong.** Giữ `model_override_rate` (vòng 1; bằng 0 trên S8 nên không bắt được thẻ này) và thêm `auto_decision_recheck_rate` (tỉ lệ quyết định tự động bị kiểm lại: base S8 1,0 · after 0,0889 · bộ nền 0,0) cùng `approval_rejected_rate` (5/6 trên S8 after). Grade: `6 monitor ✅`. |
+| 9 | 3.7, C9 | **Xong.** Fault tree sau khi sửa: mỗi nhánh có nút `VÀ [gate … hỏng]` (`_approval_ok` ngăn; trần khách/ngày giảm; config + monitor giảm) và nhánh còn hở (bảng `approvals` sai, nhiều tài khoản, lòng tin của người). |
+| 10 | `submission.json` | **Xong.** `team`, 4 `members` khớp bảng thành viên; `incident` S8; `decision_v1`, `decision_v2` "Tiếp tục"; ba dòng `three_lines` chép nguyên từ C12. Lệnh 7: `ĐỦ THÀNH PHẦN`. |
 
-**Phụ thuộc còn thiếu:** TV3 hoàn tất tiêu chí, ký/commit/push trước khi đo; TV1 hoàn tất/chốt cổng vòng 1 và C6; nhóm cung cấp số thẻ chính xác; TV1/TV3/TV4 ghi sửa đổi C7 và quyết định B8/C12. Khi có đủ, TV2 chạy trace/adhoc, nhận đúng thẻ, grade lần đầu trước khi sửa theo thẻ, phân tích C2, kiểm monitor, hoàn tất C9 và sao chép các trường còn lại vào submission.json.
-
-**Sử dụng AI:** Có dùng Codex hỗ trợ đọc project, đối chiếu dữ kiện, soạn phần phiếu TV2, cài monitor và kiểm tra. Không dùng dữ liệu/tài liệu bên ngoài; phần B2 dẫn code, dữ liệu và trace mẫu trong chính repo. Các ngưỡng kinh doanh/vận hành, chữ ký tiêu chí và quyết định của nhóm vẫn cần người được phân công chốt.
+**Sử dụng AI:** Có dùng Codex hỗ trợ đọc project, đối chiếu dữ kiện, soạn phần phiếu TV2, cài monitor và kiểm tra (vòng 1). Ở vòng 2, các mục C0, C2, C8, C9, hai monitor mới và `submission.json` được soạn nháp bằng Claude Code trong phiên làm việc chung của bàn. Không dùng dữ liệu/tài liệu bên ngoài; mọi bằng chứng là trace, report và dữ liệu trong chính repo.
 
 ### Bằng chứng
 
 - `templates/form-a-criteria.md`: A4, hai câu ranh giới đầu ra.
-- `templates/form-b-evaluation-gates.md`: B2, B6, B7.2 và B7.3; phân biệt rõ phân tích tĩnh, kết quả mong đợi và dữ liệu chưa đo.
-- `lab10/monitors.py`: hàm `model_override_rate` và đăng ký trong `MONITORS`; `templates/form-c-incident.md`: C8 giải thích công thức, C0/C2/C9 ghi phụ thuộc chưa có.
-- `submission/submission.json`: `team` và bốn `members` khớp bảng thành viên; các trường chưa có nguồn được giữ trống đúng kiểu JSON.
-- Chưa tạo commit hoặc mã lần chạy eval/grade; chưa có `runs/journal.jsonl`. Không dùng output mẫu làm mã lần chạy của nhóm.
+- `templates/form-b-evaluation-gates.md`: B2, B6, B7.2 và B7.3, có trace thật `T-002@55` (mốc base `R-base-before-20261119-154710-b45eeb`) và kết quả hai ticket hiểm `--adhoc` ở mốc base và after.
+- `lab10/monitors.py`: `model_override_rate` (vòng 1), `auto_decision_recheck_rate` và `approval_rejected_rate` (vòng 2, thẻ S8), đều đăng ký trong `MONITORS`; `templates/form-c-incident.md`: C0 (nhật ký 4 lần chạy vòng 2), C2 (3 lỗi của thẻ), C8 (ba ô thước đo → dữ liệu → cách tính), C9 (fault tree sau khi sửa).
+- Commit `6b8726b` "Complete my task TV2" (15:46): 1.6(d), bản đầu B2/B6/B7.2/B7.3, `model_override_rate`, `submission.json` (team, members); gộp vào `main` qua PR #3.
+- Vòng 1: B2, B6, B7.2, B7.3 trên `main` dùng trace thật (`T-002@55`) và kết quả `--adhoc` ở mốc base/after (commit `96bed0e`, gộp vào `main` bằng `2f0628e`).
+- Vòng 2 (thẻ S8): nhận thẻ commit `a0163b6`; grade đầu `R-S8-grade-20261119-164441-fd4774` (trước khi sửa); grade cuối `R-S8-grade-20261119-165948-038d52`: **PASS-VISIBLE**, `6 monitor ✅` với `auto_decision_recheck_rate` sáng đèn ở cả `before` (0,0 vs 1,0) và `after` (0,0625 vs 0,0889); bài nộp commit `031dcdd`, PR #4.
 - Kiểm tra ngày **19/11/2026 (GMT+7)**: `python -B -X utf8 -m unittest discover -s tests -v` → **13/13 tests OK**. Đây là bộ kiểm tra cài đặt/regression công khai được hướng dẫn chạy ở CP1, không phải report eval/grade của nhóm.
 - Kiểm thử monitor trực tiếp bằng sự kiện tổng hợp trong bộ nhớ: **9 ca đạt** (batch rỗng; thiếu events; batch hỗn hợp trả 0.5; retry chỉ tính một trial; độ trễ bằng nhau; độ trễ DB bằng 0; sự kiện thiếu giá trị; sự kiện khác loại/trường; trial đã chuyển người). Kiểm thêm không đổi dữ liệu đầu vào và không phụ thuộc nhãn, `pass`, mã ticket hay seed; tất cả đạt.
-- Kiểm JSON: tên repo, đủ bốn `members`/MSSV và mục cá nhân tương ứng đều khớp; các trường thẻ/quyết định/ba dòng chưa có nguồn vẫn để trống. Các lệnh Python dùng `-B` và kiểm tra trong bộ nhớ, không tạo file test phụ hoặc bytecode.
-- Kiểm phạm vi: chỉ sáu file có thay đổi nội dung; các mục cá nhân khác và các mục phiếu giao cho TV1/TV3/TV4 giữ nguyên. `git diff --check` không báo lỗi; không có file mới.
-- Khắc phục môi trường Windows: checkout ban đầu dùng `core.autocrlf=true`, làm 19 file khóa có xuống dòng CRLF khác hash. Đã xác minh từng file chỉ khác xuống dòng, khôi phục đúng byte LF từ HEAD có hash trùng MANIFEST và đặt riêng repo `core.autocrlf=input`. Cả **19/19 file khóa hiện có khớp hash**, không thay nội dung, không có thay đổi nào được stage/commit. Đây là kiểm hash file, chưa phải kết quả grade cho thẻ.
+- Kiểm JSON: tên repo, đủ bốn `members`/MSSV và mục cá nhân tương ứng đều khớp; sau vòng 2 đã điền `incident`, hai quyết định và ba dòng bắt buộc (chép từ C12); lệnh 7 báo đủ mọi trường.
+- Kiểm phạm vi (ở commit `6b8726b`): chỉ sáu file có thay đổi nội dung; các mục cá nhân khác và các mục phiếu giao cho TV1/TV3/TV4 giữ nguyên. `git diff --check` không báo lỗi; không có file mới.
+- Khắc phục môi trường Windows: checkout ban đầu dùng `core.autocrlf=true`, làm 19 file khóa có xuống dòng CRLF khác hash. Đã xác minh từng file chỉ khác xuống dòng, khôi phục đúng byte LF từ HEAD có hash trùng MANIFEST và đặt riêng repo `core.autocrlf=input`. Cả **19/19 file khóa hiện có khớp hash**, không thay nội dung, không có thay đổi nào được stage/commit. Sau đó lệnh 6 trên thẻ S8 xác nhận `1 integrity ✅` (file khoá còn nguyên) ở cả grade đầu và grade cuối.
 
 ### Exit ticket
 
 - **Điều học được:** Một lần thay dữ kiện DB bằng lời khách có thể tạo cả chi tiền sai lẫn lỗi oan cho bên thứ ba; pass_rate cao và việc tool báo thành công chưa đủ chứng minh an toàn. Monitor phát hiện sự kiện không tự bảo đảm chặn tác hại.
-- **Điều còn chưa chắc:** Chưa biết thẻ nhóm được giao và chưa có dữ liệu ba mốc nên chưa thể kết luận monitor hiện tại bắt được sự cố của nhóm hay các cổng sửa xong đã loại được nhánh nào; cần đo và kiểm lại sau khi đủ đầu vào, kể cả trong pilot thật.
+- **Điều còn chưa chắc:** Monitor đầu tiên của tôi (`model_override_rate`) bằng 0 trên thẻ S8, tức một chỉ số đúng cho bộ nền chưa chắc bắt được sự cố khác; `auto_decision_recheck_rate` bắt được S8 trên dữ liệu mock, nhưng chưa biết nó có sớm báo được trong pilot thật, khi hành vi kiểm lại của nhân viên không theo công thức cố định.
 
 ## NguyenVanHieu-2A202603746
 
@@ -188,14 +226,30 @@ Vai: **Sản phẩm và kinh doanh** (TV3). File: `config/acceptance_criteria.js
 
 ### Đóng góp cụ thể
 
-- Câu 1.1: viết mục tiêu cấp hệ thống cho trợ lý hoàn tiền giao trễ, dựa trên PRD v1.1 của Lab 9 (§3) và luồng ghi tiền, ghi lỗi hãng của Lab 10. Đã dùng AI để đọc yêu cầu và soát câu chữ.
-- Câu 1.4: thiết kế telemetry theo ca cho lỗi hãng thiếu căn cứ, dùng log ghi lỗi, tracking và chính sách; nêu công thức, ngưỡng báo động và điểm mù. Đã dùng AI để soát thước đo và cách tính.
-- Câu 1.6: dự thảo ngưỡng chấp nhận, bốn quy tắc quyết định và điều kiện dừng từ dữ liệu vận hành của lab; chưa ký khi các mục Phiếu A của đồng đội còn trống. Đã dùng AI để soát câu chữ và cấu trúc JSON.
+Người thực hiện: **Nguyễn Văn Hiếu — 2A202603746**, thành viên 3, vai Sản phẩm và kinh doanh.
+
+| # | Đầu việc TV3 | Phần đã thực hiện và trạng thái |
+|--:|---|---|
+| 1 | 1.1, A1 | **Xong.** Mục tiêu cấp hệ thống: giải quyết yêu cầu hoàn tiền giao trễ an toàn và đối soát được (đúng khoản, đúng bên trả, đúng lỗi hãng theo đơn, tracking, chính sách hiệu lực; không vượt quyền phê duyệt, không lộ dữ liệu; chuyển người trước khi ghi), dựa trên PRD v1.1 §3. |
+| 2 | 1.4, A2 cột Telemetry | **Xong.** Telemetry theo ca 480 phút cho lỗi hãng thiếu căn cứ: tử số, mẫu số, cách xử lý ca thiếu dữ liệu; báo đỏ khi ≥ 1 dòng nghi vấn/ca và dừng ghi lỗi hãng tự động; có điểm mù. |
+| 3 | 1.6 ★, A4, `acceptance_criteria.json` | **Xong.** Ngưỡng của bàn (không chép file example): pass_rate ≥ 0,98, pass_k ≥ 0,95, ba chỉ số an toàn = 0, escalation_rate ≤ 0,35, chi phí ≤ 8.500đ (biên 15% so với làm tay 10.000đ), ROI ≥ 0,30, 0 ca ùn; câu "Nếu … thì chúng tôi sẽ …" cho từng chỉ số; soát bốn câu hỏi; `stop_condition` và bốn dòng `decision_rule`; hẹn xem lại 26/11/2026. |
+| 4 | Ký tiêu chí, A5 | **Xong.** Ký bằng lệnh 1 với bản ngưỡng trên, giữ nguyên số: `signed_at` 15:46:54, hash `75be12e3`, commit `1850257` push lúc 15:47, **trước** lần chạy đánh giá đầu tiên (15:47:10). |
+| 5 | 2.3, B3 | **Xong.** Bản đồ dữ liệu: trường then chốt, nguồn sự thật hay bản sao (`index_active`, `refund_status` là bản sao), định dạng cần để ý; ví dụ drift: REFUND-v4 có hiệu lực 01/12/2026 (bỏ `FORCE_MAJEURE`, hạn mức 100.000đ), là **quan hệ vào–ra đổi**, ảnh hưởng lỗi hãng oan, hoàn sai, tỉ lệ chuyển người. |
+| 6 | 2.9, `business`, B7.4 | **Xong.** `daily_refund_cap_vnd` 1.500.000 (75% ngân sách Finance 2.000.000đ); `cost_budget_per_ticket_vnd` 1.500 (đúng trần LLM của `ops_limits`); `pilot_scope` all 100%; `roi_min` 0,3; mỗi số một câu lý do. |
+| 7 | Quyết định v1, B8 | **Xong.** **Tiếp tục có điều kiện**: bộ nền ở mốc prepared đạt cả 9 ngưỡng, không vượt trần; ghi rõ vế "gói sự cố" của `decision_rule` phải kiểm ở v2; xấu nhất kho HCM/hãng VNX ở base; bằng chứng còn thiếu. |
+| 8 | 3.2, C5 | **Xong.** Specification: khoản trên `auto_limit_vnd` chỉ được ghi khi phê duyệt thoả 8 điều kiện (đúng ticket, đơn, khách, `valid`, còn hạn, ≤ `max_vnd`, đúng người đứng tên, chưa dùng); kiểm bằng `_approval_ok` và `wrongful_refund_vnd` = 0. |
+| 9 | 3.5, `business`, C7 tổng hợp | **Xong.** Nguyên nhân của S8 không nằm ở tiền hay phạm vi nên giữ nguyên `business` (độ phủ 1,0, 2.952đ/ticket); tổng hợp bảng C7 cho 3 nhánh, ghi rõ **ngăn** (phê duyệt) hay **giảm** (trần khách/ngày, lòng tin). |
+| 10 | Quyết định v2 ★, C12 | **Xong.** **Tiếp tục**: gói S8 và bộ nền đều đạt mọi ngưỡng đã ký, không vượt trần, độ phủ 1,0; report "Được phép cân nhắc 'Tiếp tục'"; hai rủi ro còn lại có PIC; ba dòng bắt buộc có số. |
+
+**Sử dụng AI:** Câu 1.1, 1.4, 1.6 có dùng AI để đọc yêu cầu, soát thước đo, câu chữ và cấu trúc JSON (bản nháp tự viết, commit `fcd424a`). Các mục B3, B7.4, B8, C5, C7, C12 được soạn nháp bằng Claude Code trong phiên làm việc chung của bàn; ngưỡng đã ký giữ nguyên số của bản nháp.
 
 ### Bằng chứng
 
-- `templates/form-a-criteria.md`, mục A1, câu 1.1. Mã commit bổ sung khi bàn lưu phần việc lên repo.
-- `templates/form-a-criteria.md`, mục A2 cột Telemetry production và mục A4; `config/acceptance_criteria.json` (bản dự thảo, chưa có `.lock`).
+- Commit `fcd424a` "Draft TV3 Part 1 acceptance criteria" (15:35): câu 1.1, 1.4, 1.6 và bản nháp `config/acceptance_criteria.json`.
+- Commit `1850257` "Sign acceptance criteria" (15:47:02); `config/acceptance_criteria.lock`: `signed_at` 2026-11-19T15:46:54, sha256 `75be12e3…`. Lệnh 7: "tiêu chí giữ nguyên từ commit 'Sign acceptance criteria'".
+- `templates/form-b-evaluation-gates.md`: B3, B7.4, B8 (commit `96bed0e`); `config/operating_gates.json` mục `business`.
+- Bằng chứng v1: `R-base-before-20261119-154710-b45eeb` và `R-base-prepared-20261119-154943-3c1c70` (cả 9 ngưỡng `[ĐẠT ]`).
+- `templates/form-c-incident.md`: C5 (câu 3.2), C7, C12 (commit `031dcdd`, PR #4). Bằng chứng v2: base `R-S8-before-20261119-165950-038d52` · prepared `R-S8-prepared-20261119-165950-038d52` · after `R-S8-after-20261119-165950-038d52`; grade `R-S8-grade-20261119-165948-038d52`.
 
 ### Exit ticket
 
@@ -228,19 +282,23 @@ Người thực hiện: **Nguyễn Lê Trọng Mạnh — 2A202603857**, thành 
 |--:|---|---|
 | 1 | 1.2, A1 | Đã viết hai mục tiêu. **Chị Oanh:** cuối tuần khớp sổ với hãng và shop mà không phải tra ngược hay đảo bút toán nào do trợ lý ghi: đúng số tiền, đúng `payer`, có căn cứ, mỗi lỗi hãng đúng hãng, đúng kiện, có nguyên nhân. **Chị Hạnh:** ca chuyển sang vừa sức một ca trực (1 người, 6 ca/giờ), được nhận trong 60 phút, không ùn, có ghi chú giải thích; không dùng phê duyệt mang tên chị khi đã hết hạn, đã dùng hoặc vượt `max_vnd`. Số liệu lấy từ `staff`, `ops_limits`, `ops_facts`, `carriers`, `staff_behavior` trong `data/world.json`. |
 | 2 | Soát tiêu chí (phút 60–65) | Đã soát `config/acceptance_criteria.json` theo góc vận hành và pháp lý: ba chỉ số an toàn bằng 0, `queue_stuck_max` = 0 khớp mục tiêu chị Hạnh, `escalation_rate_max` 0,35 trong sức một người duyệt, `cost_per_ticket_vnd_max` 8.500đ dưới mức làm tay 10.000đ, đủ `stop_condition` và bốn dòng `decision_rule`, không chép ngưỡng từ file example. |
-| 3 | 2.4, 2.10 (B4, B5, B7.5, B7.6) | Phiếu B mục B4, B5, B7.5, B7.6 và mục `operations`, `legal` trong `config/operating_gates.json` đã điền trước khi chốt vòng 1 (commit `96bed0e`, 15:49). |
+| 3 | 2.4, 2.10 (B4, B5, B7.5, B7.6) | Phiếu B mục B4, B5, B7.5, B7.6 và mục `operations`, `legal` trong `config/operating_gates.json` đã điền trước khi chốt vòng 1 (chốt lúc 15:49:43, `config/round1.lock`; commit `96bed0e` lúc 15:54). |
 | 4 | Gộp bài vào `main` (trưởng nhóm) | Gộp nhánh `tv1-hai` vào `main` để đưa tiêu chí đã ký và bản chốt vòng 1 lên nhánh nộp. Xử lý xung đột: Phiếu A giữ ô 1.6(d) của TV2, Phiếu B giữ bản có trace thật của `tv1-hai`. Không sửa `acceptance_criteria.json`, `.lock` và các file `.round1`. |
 | 5 | Môi trường Windows | Phát hiện `core.autocrlf=true` làm file khoá và file tiêu chí trên đĩa đổi sang CRLF, lệch hash với MANIFEST và `.lock`. Đã tắt autocrlf cho repo, đưa file về LF; không đổi nội dung commit nào. Đổi email Git sang `2A202603857@example.com` theo RULES. |
-| 6–10 | 3.1 (C3, C4), 3.3 (C5), 3.5 (C7 phần vận hành), 3.7 (C11) | Chờ thẻ sự cố (phút 125). |
+| 6 | 3.1, C3 (phần riêng thẻ S8) | **Xong.** C3.4 hiệu chỉnh lòng tin cho nhân viên duyệt và trưởng ca đứng tên ở ba mốc (tin quá mức trước kiểm toán, không tin sau kiểm toán, tin vừa đủ), kèm dữ liệu làm lệch lòng tin (`ledger[].approval_id`, `approvals[].ticket_id/status`, thiếu ghi chú); một dòng "`issue_refund` trên hạn mức" ở C3.1 Bước 2, trả quyền về NV-HANH. |
+| 7 | 3.1, C4 HAZOP của thẻ | **Xong.** 5 dòng trên `issue_refund` (INVALID `status`/hạn, WRONG phê duyệt của ticket/khách khác, INVALID `max_vnd`, INCOMPLETE tổng tiền theo khách, INCAPABLE người duyệt), trong đó một nhánh chưa thấy trên trace (mã cấp cho ticket khác); không ghi đè HAZOP vòng 1. |
+| 8 | 3.3, C5 | **Xong.** Giả định môi trường: bảng `approvals` luôn phản ánh đúng ý trưởng ca ngay lúc trợ lý đọc; có thể sai vì thu hồi bằng lời rồi mới cập nhật bảng. |
+| 9 | 3.5, `operations`/`legal`, C7 phần vận hành | **Xong.** Nhánh [3] (nhân viên mất tin) đã đóng từ config vòng 1 (`decision_note: true`, `review_sampling_pct: 10`, `approver_id: NV-HANH`) đúng `staff_behavior.trust_conditions`: kiểm lại 100% → 10%, 36 ca ùn → 0, vẫn 1 người trực (không xếp thêm người). Vòng 2 giữ nguyên con số, thêm quy trình báo NV-HANH khi một mã bị từ chối. |
+| 10 | 3.7 ★, C11 | **Xong.** Cập nhật checklist nhóm 4, 5, 7, 8, 9 (mỗi dòng một PIC); Runbook 4 (tín hiệu lẽ ra báo trước, ngưỡng mới cho `auto_decision_recheck_rate` 0,20/0,50 và `approval_rejected_rate` > 0, người, quy trình, nói gì với bên thứ ba trong 24 giờ); Runbook 5 ba kịch bản (gấp 3 ticket/giờ, LLM lỗi > 15 phút, người duyệt không tin một quyết định). |
 
-**Sử dụng AI:** Có dùng Claude Code để đọc đề, dữ liệu mock và code; soạn nháp câu 1.2; soát ngưỡng tiêu chí; kiểm hash file khoá; hỗ trợ gộp nhánh và xử lý xung đột. Các con số dẫn trong phiếu đều lấy từ dữ liệu của repo; lựa chọn giữ bản nào khi xung đột do tôi quyết định.
+**Sử dụng AI:** Có dùng Claude Code để đọc đề, dữ liệu mock và code; soạn nháp câu 1.2; soát ngưỡng tiêu chí; kiểm hash file khoá; hỗ trợ gộp nhánh và xử lý xung đột. Các con số dẫn trong phiếu đều lấy từ dữ liệu của repo; lựa chọn giữ bản nào khi xung đột do tôi quyết định. Các mục vòng 2 (C3, C4, câu 3.3, C7 phần vận hành, C11) được soạn nháp bằng Claude Code trong phiên làm việc chung của bàn.
 
 ### Bằng chứng
 
 - `templates/form-a-criteria.md`, mục A1, câu 1.2 — commit `8d4ecc5`.
 - Commit gộp `2f0628e` "Merge tv1-hai vào main: tiêu chí đã ký, chốt vòng 1, Phiếu A/B".
 - Kiểm sau khi gộp: `python -m lab10.criteria verify` không báo lỗi (hash `75be12e3…` khớp bản ký lúc 15:46:54); lịch sử còn commit `Sign acceptance criteria` (`1850257`, 15:47:02) và file tiêu chí không đổi từ đó; bản chốt vòng 1 khớp `config/round1.lock` (15:49:43); 19/19 file khoá khớp `lab10/MANIFEST.json`; `python -m unittest discover -s tests` → 13 tests OK.
-- Chưa có mã lần chạy `eval`/`grade` của riêng TV4 (vòng 2 chưa bắt đầu).
+- Vòng 2 (thẻ S8): `templates/form-c-incident.md` mục C3.1 (dòng trên hạn mức), C3.4, C4, C5 (câu 3.3), C7 dòng [3], C11 (commit `031dcdd`, PR #4). Bằng chứng số: mốc base `R-S8-before-20261119-165950-038d52` (kiểm lại 100%, 36 ca ùn, chờ lâu nhất 216 phút, 11.225đ/ticket) so với after `R-S8-after-20261119-165950-038d52` (kiểm lại 10%, 0 ca ùn, chờ lâu nhất 5 phút, 2.952đ/ticket, 1 người trực); report grade `R-S8-grade-20261119-165948-038d52`: "Niềm tin của nhân viên duyệt: đạt".
 
 ### Exit ticket
 
