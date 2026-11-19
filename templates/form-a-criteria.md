@@ -24,8 +24,19 @@ rồi mới chạy đánh giá. Khối 1 không sửa code.
 
 ### Câu 1.2 · Mục tiêu nhìn từ hai người
 
-- Chị Oanh, kế toán đối soát (không dùng trợ lý, nhưng phải khớp sổ với hãng và shop mỗi tuần): …
-- Chị Hạnh, trưởng ca CSKH (phải duyệt những ca trợ lý chuyển sang): …
+- Chị Oanh, kế toán đối soát (không dùng trợ lý, nhưng phải khớp sổ với hãng và shop mỗi tuần): Cuối tuần chị khớp sổ với
+  hãng và shop mà **không phải tra ngược hay đảo một bút toán nào do trợ lý ghi**. Mỗi khoản hoàn trong sổ cái phải đúng số tiền,
+  đúng bên trả (`payer`), có căn cứ (chính sách đang hiệu lực, hoặc phê duyệt còn hạn và chưa dùng), và khớp số tiền đã báo cho khách.
+  Mỗi lỗi ghi cho hãng phải đúng hãng, đúng kiện và có nguyên nhân ghi lại.
+  *Vì sao:* một lỗi ghi oan là một khoản phạt mà hãng sẽ khiếu nại khi đối soát. Ví dụ GHSH bị phạt 150.000đ mỗi lỗi và bị đình chỉ
+  sau 3 lỗi trong 7 ngày (`data/world.json` → `carriers`). Khi đó chị Oanh là người phải giải trình và hoàn lại.
+- Chị Hạnh, trưởng ca CSKH (phải duyệt những ca trợ lý chuyển sang): Các ca trợ lý chuyển sang **vừa sức một ca trực và đủ thông tin
+  để chị quyết nhanh**. Mỗi ca được nhận xử lý trong 60 phút (`ops_limits.review_sla_minutes`), không có ca nào bị ùn đến hết ca.
+  Mỗi ca kèm ghi chú giải thích: vì sao chuyển, số tiền đề xuất, phê duyệt liên quan. Trợ lý không dùng phê duyệt mang tên chị khi phê duyệt
+  đó đã hết hạn, đã dùng hoặc vượt `max_vnd`.
+  *Vì sao:* mặc định chỉ 1 người trực, duyệt được 6 ca/giờ (`ops_facts`). Có ghi chú thì kiểm lại một quyết định chỉ tốn 0,4 ca
+  (`recheck_with_note_units`). Ghi chú cũng là một điều kiện để CSKH tin quyết định tự động và chỉ kiểm mẫu, không phải kiểm lại bằng tay
+  (`staff_behavior.trust_conditions`).
 
 ---
 
