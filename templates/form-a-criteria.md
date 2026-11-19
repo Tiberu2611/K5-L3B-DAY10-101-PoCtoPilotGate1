@@ -48,12 +48,12 @@ trợ lý có đang gây thiệt hại cho bên ngoài LogiX không; không có 
 
 | | Offline, cho MỘT bước (câu 1.3) | Telemetry production (câu 1.4) |
 |---|---|---|
-| **Bước / hành vi được đo** | | |
-| **Thước đo** (một câu, có đơn vị) | | |
-| **Dữ liệu** (lấy ở đâu, bao nhiêu, ai gán nhãn) | | |
-| **Cách tính** (công thức, mẫu số, cách xử lý ca thiếu dữ liệu) | | |
+| **Bước / hành vi được đo** | Bước **ghi lỗi hãng** (lệnh ghi `file_carrier_fault`, chạy sau `issue_refund`) | |
+| **Thước đo** (một câu, có đơn vị) | **Tỉ lệ dòng lỗi hãng ghi sai** (%): trong số dòng lỗi hãng agent đã ghi, bao nhiêu phần trăm sai hãng, sai kiện hoặc không có căn cứ theo tracking DB và chính sách hiệu lực. Kèm số đếm riêng **lỗi hãng bỏ sót** (số lần chạy). | |
+| **Dữ liệu** (lấy ở đâu, bao nhiêu, ai gán nhãn) | **Dự đoán:** sự kiện `{"type":"tool","tool":"file_carrier_fault"}` (`parcel_id`, `carrier_id`, `delay_days`) trong `runs/<mã lần chạy>/traces/*.json`, bộ nền 22 ticket × 5 seed = 110 lần chạy. **Nhãn:** không do người gán tay; sinh tự động từ nguồn sự thật `data/world.json` → `orders[].parcels` (`promised_date`, `delivered_date`, `delay_cause`, `carrier_id`) và `policies` (`effective_from/to`, `fault_causes`, `late.min_days_fee`) tại ngày `as_of`. Trường `delay_cause` do đội vận hành/hãng nhập vào tracking. Đối chiếu chéo với `label.faults` của bộ nền (người soạn lab gán) để kiểm quy tắc sinh nhãn. | |
+| **Cách tính** (công thức, mẫu số, cách xử lý ca thiếu dữ liệu) | Với mỗi dòng lỗi hãng: `p = H.ticket_parcel(order, ticket, as_of)`, `pol = H.effective_policy(policies, as_of)`. Dòng **đúng** khi cả ba: (1) `parcel_id == p.parcel_id`; (2) `carrier_id == p.carrier_id`; (3) `H.carrier_at_fault(pol, p, H.db_delay_days(p, as_of)) == True` (độ trễ lấy từ DB, KHÔNG lấy số khách viết). **Tỉ lệ sai = số dòng sai / tổng số dòng `file_carrier_fault` đã ghi**, báo dạng `k/n` và %. Thiếu dữ liệu: không tìm thấy đơn/kiện hoặc `pol = None` thì tính là **sai** (không có căn cứ ghi lỗi); một ticket có > 1 dòng thì từ dòng thứ 2 tính sai (ghi trùng); `n = 0` ghi "không áp dụng", không ghi 0%. **Bỏ sót** = số lần chạy có `issue_refund` đã ghi, điều kiện (3) đúng, nhưng không có dòng lỗi hãng; báo riêng, không gộp vào mẫu số. | |
 | **Khung thời gian / ngưỡng báo động** | (không áp dụng) | |
-| **Điểm mù** (thước đo này KHÔNG thấy gì) | | |
+| **Điểm mù** (thước đo này KHÔNG thấy gì) | Không thấy khi chính tracking DB sai hoặc nhập `delay_cause` muộn hay thiếu (nhãn sinh từ DB nên sai theo DB). Không thấy lỗi ở các ticket bị escalate trước bước ghi. Không đo trần lỗi/hãng/ngày (`ops_limits.max_auto_strikes_per_carrier_per_day`) hay hậu quả cho hãng (tiền phạt, bị đình chỉ). Đổi phiên bản chính sách (v4 từ 01/12 bỏ `FORCE_MAJEURE` khỏi `fault_causes`) phụ thuộc đúng `as_of`. | |
 
 **Ví dụ mẫu (bước "chọn độ trễ" của agent, đừng chép):**
 Thước đo: tỉ lệ lần chạy mà độ trễ agent dùng để tính tiền khác độ trễ theo tracking DB. Dữ liệu: sự kiện `proposal.delay_days_used`
@@ -71,9 +71,9 @@ nhau chia cho số lần chạy có sự kiện `proposal`; lần chạy không 
 
 ### Câu 1.5 · Chọn MỘT kết luận và giải thích một câu
 
-Số minh hoạ trong đề (không phải số của bàn). Khoanh: **(a) · (b) · (c) · (d)**
+Số minh hoạ trong đề (không phải số của bàn). Khoanh: **(a) · (b) · (c) · (d)** → chọn **(b)**
 
-Giải thích một câu: …
+Giải thích một câu: Y chỉ hơn X đúng 1/50 lần chạy (1,0 so với 0,98), mà 1,0 vẫn nằm trong khoảng tin cậy 95% [0,94; 1,0] của X, nên dữ liệu không loại được khả năng X thật ra tốt ngang Y. Vì vậy chưa đủ căn cứ nói Y tốt hơn. (c) sai vì cũng không chứng minh được hai bản bằng nhau; (d) sai vì "đạt" do ngưỡng đã ký quyết định, không do số seed.
 
 ---
 
