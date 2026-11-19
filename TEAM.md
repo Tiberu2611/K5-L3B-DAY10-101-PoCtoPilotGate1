@@ -5,7 +5,7 @@
 - Tên nhóm (`TenNhom`, không dấu, không khoảng trắng): `101`
 - Lớp: `L3B`
 - Repo của bàn: `K5-L3B-DAY10-101-PoCtoPilotGate1`
-- Thẻ sự cố đã bốc (S1–S8):
+- Thẻ sự cố đã bốc (S1–S8): `S8`
 
 ## Thành viên
 

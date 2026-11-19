@@ -6,12 +6,12 @@
     "NguyenVanHieu-2A202603746",
     "NguyenLeTrongManh-2A202603857"
   ],
-  "incident": "",
-  "decision_v1": "",
-  "decision_v2": "",
+  "incident": "S8",
+  "decision_v1": "Tiếp tục",
+  "decision_v2": "Tiếp tục",
   "three_lines": {
-    "environment_assumption": "",
-    "reduce_or_prevent": "",
-    "measure_in_pilot": ""
+    "environment_assumption": "Bảng `approvals` luôn phản ánh đúng ý trưởng ca ngay lúc trợ lý đọc (mã thu hồi, đã dùng hay đổi hạn mức được sửa `status`/`max_vnd` ngay, mỗi mã ghi đúng `ticket_id`); thực tế trưởng ca có thể thu hồi bằng lời và cập nhật bảng muộn.",
+    "reduce_or_prevent": "Cổng `_approval_ok` NGĂN hẳn việc ghi tiền bằng phê duyệt sai ticket, đơn, khách, đã dùng, thu hồi, hết hạn hay vượt `max_vnd`, vì nó kiểm trước lệnh ghi và không đi qua model (S8 after: 0đ hoàn sai). Nhưng phần mất lòng tin của nhân viên chỉ được GIẢM (kiểm lại 100% → 10% nhờ ghi chú, kiểm mẫu và người đứng tên), vì lòng tin là hành vi của người và cổng chỉ đúng khi bảng phê duyệt đúng.",
+    "measure_in_pilot": "Tỉ lệ nhân viên CSKH thật kiểm lại quyết định tự động (`auto_decision_recheck_rate`) và số phút thật để kiểm một quyết định có ghi chú (mock giả định 0,4 ca), tỉ lệ phê duyệt bị từ chối mỗi ngày (`approval_rejected_rate`), và số ca/giờ thật vào hàng chờ ở giờ cao điểm so với 6 ca/giờ/người."
   }
 }
