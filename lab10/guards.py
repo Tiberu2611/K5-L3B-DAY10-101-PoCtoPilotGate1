@@ -66,6 +66,12 @@ def _approval_ok(ctx, approval_id, order_id, amount):
     approver = (ctx.gates or {}).get("operations", {}).get("approver_id") or a.get("approver_id")
     if a.get("order_id") != order_id:
         return False, "phê duyệt của đơn khác"
+    # Vòng 2 (S8): phê duyệt cấp cho ticket khác / khách khác thì không dùng được, kể cả khi cùng đơn và còn "valid".
+    if a.get("ticket_id") and a["ticket_id"] != ctx.ticket.get("ticket_id"):
+        return False, "phê duyệt cấp cho ticket khác"
+    order = ctx.tools.lookup_order(order_id) or {}
+    if a.get("customer_id") and a["customer_id"] != order.get("customer_id"):
+        return False, "phê duyệt cấp cho khách khác"
     if a.get("status") != "valid":
         return False, f"phê duyệt ở trạng thái {a.get('status')}"
     if a.get("expires_at") and a["expires_at"] < ctx.as_of:

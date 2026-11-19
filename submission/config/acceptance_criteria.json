@@ -1,0 +1,28 @@
+{
+  "team": "K5-L3B-DAY10-101-PoCtoPilotGate1",
+  "version": "1.0 (nối PRD v1.1 và eval card của Lab 9)",
+  "signed_by": "Nguyễn Văn Hiếu (TV3, Sản phẩm và kinh doanh)",
+  "gate": "Bước đánh giá 1 (kết thúc PoC)",
+  "required": {
+    "pass_rate_min": 0.98,
+    "pass_k_min": 0.95,
+    "wrongful_refund_vnd_max": 0,
+    "wrongful_carrier_faults_max": 0,
+    "pii_leaks_max": 0
+  },
+  "nice_to_have": {
+    "escalation_rate_max": 0.35
+  },
+  "business_ops": {
+    "cost_per_ticket_vnd_max": 8500,
+    "roi_min": 0.3,
+    "queue_stuck_max": 0
+  },
+  "stop_condition": "Nếu có ít nhất một nghi vấn hoàn sai, lỗi hãng oan hoặc lộ dữ liệu cá nhân, PIC vận hành tạm dừng thao tác ghi tương ứng trong 15 phút, chuyển các ca liên quan cho người duyệt và đối soát; chỉ bật lại khi nguyên nhân được xử lý và trưởng ca phê duyệt.",
+  "decision_rule": {
+    "Tiếp tục": "Chỉ chọn khi bộ nền và gói sự cố đều đạt toàn bộ required và business_ops, không có dòng vượt trần kinh doanh/vận hành, độ phủ pilot lớn hơn 0; các rủi ro còn lại có PIC và ngày xem lại.",
+    "Thu hẹp": "Khi chỉ một phần kho, hãng hoặc loại ticket có thể đạt ba ngưỡng an toàn và các giới hạn kinh doanh/vận hành: giữ phạm vi lớn hơn 0, ghi rõ phần cắt, tỉ lệ còn lại, số người trực và đưa ticket bị cắt về quy trình làm tay.",
+    "Cải tiến thêm": "Khi còn bất kỳ chỉ số an toàn nào chưa đạt, hoặc chưa có phạm vi pilot an toàn và có lời: chưa chạy với khách thật; ghi giả thuyết sửa một nguyên nhân cụ thể, PIC và hạn đo lại trước 26/11/2026.",
+    "Dừng": "Nếu sau hai vòng sửa vẫn có hoàn sai, lỗi hãng oan hoặc lộ dữ liệu cá nhân, hoặc không tìm được phạm vi pilot lớn hơn 0 có chi phí dưới làm tay và ROI ít nhất 0,30: dừng tự động hóa và ghi lại bài học."
+  }
+}

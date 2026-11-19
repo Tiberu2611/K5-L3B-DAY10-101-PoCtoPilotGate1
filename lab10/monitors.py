@@ -40,8 +40,35 @@ def model_override_rate(trials):
     return overridden / max(1, len(trials))
 
 
+def auto_decision_recheck_rate(trials):
+    """Vòng 2 (thẻ S8) · vận hành / con người: nhân viên có đang tin quyết định tự động không?
+
+    Tỉ lệ quyết định tự động (status refunded / denied) bị nhân viên kiểm lại bằng tay (review_kind == "recheck").
+    Bình thường xấp xỉ operations.review_sampling_pct (10%); tiến về 100% nghĩa là cả ca đã thôi tin trợ lý
+    và hàng chờ sắp ùn. Không cần nhãn: chỉ đọc status và review_kind. Không có quyết định tự động nào thì trả 0.0.
+    """
+    auto = [t for t in trials if t.get("status") in ("refunded", "denied")]
+    return sum(t.get("review_kind") == "recheck" for t in auto) / max(1, len(auto))
+
+
+def approval_rejected_rate(trials):
+    """Vòng 2 (thẻ S8) · quyền hạn: agent hay đem phê duyệt không hợp lệ ra dùng tới mức nào?
+
+    Trong các trial mà agent định dùng một phê duyệt (sự kiện approval_used), tỉ lệ bị cổng C1 từ chối
+    (sự kiện guard kind == "approval_rejected": sai ticket / đơn / khách, đã dùng, thu hồi, hết hạn, vượt max_vnd,
+    sai người đứng tên). > 0 là có mã duyệt hỏng trong bảng approvals: báo trưởng ca đứng tên để thu hồi/cấp lại.
+    Không trial nào dùng phê duyệt thì trả 0.0.
+    """
+    used = [t for t in trials if any(e.get("type") == "approval_used" for e in t.get("events") or [])]
+    bad = sum(any(e.get("type") == "guard" and e.get("kind") == "approval_rejected" for e in t.get("events") or [])
+              for t in used)
+    return bad / max(1, len(used))
+
+
 MONITORS = {
     "escalation_rate": escalation_rate,     # có sẵn; KHÔNG tính là metric mới của đội
     "model_override_rate": model_override_rate,
+    "auto_decision_recheck_rate": auto_decision_recheck_rate,   # S8: nhân viên kiểm tay (mất tin)
+    "approval_rejected_rate": approval_rejected_rate,           # S8: phê duyệt không hợp lệ bị đem dùng
 }
 STARTER_MONITORS = ("escalation_rate",)
