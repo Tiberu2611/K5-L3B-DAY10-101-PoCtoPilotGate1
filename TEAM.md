@@ -130,15 +130,42 @@ Vai: **Kỹ sư cổng** (TV2). File: `lab10/monitors.py`, `submission/submissio
 
 ### Đóng góp cụ thể
 
-...
+Người thực hiện: **Vũ Văn Chủ — 2A202603873**, thành viên 2, vai Kỹ sư cổng. Đã đọc đề, hướng dẫn, phân công, dữ liệu mock, luồng agent, cổng, monitor, bộ đo và quy trình nộp để thực hiện đúng các mục được giao. Chỉ sửa các mục TV2 trong ba phiếu, `lab10/monitors.py`, `submission/submission.json` và mục cá nhân này.
+
+| # | Đầu việc TV2 | Phần đã thực hiện và trạng thái |
+|--:|---|---|
+| 1 | 1.6(d), A4 | Đã viết hai ranh giới: không lấy số ngày khách khai làm căn cứ ghi tiền/lỗi hãng; chuyển người khi vượt hạn mức mà thiếu phê duyệt hợp lệ. Giải thích ngưỡng trên 200.000đ theo REFUND-v3/ngày mock, cần tra lại khi chính sách đổi. |
+| 2 | 2.2, B2 | Đã điền đủ ba phần soát lỗi `T-002@55`: hoàn sai 20.000đ và lỗi oan VNX cùng bắt nguồn từ `model_override` 2→5 ngày. Nguồn là code, DB và trace mẫu phát sẵn; chưa chạy trace thực tế vì chưa ký tiêu chí. |
+| 3 | 2.5, B6 | Đã ghi bản pre-mortem đủ bốn lăng kính, năm lý do và chọn ba cổng đề xuất; có nguồn dữ liệu và người phụ trách triển khai theo phân công. Bản ghi chờ cả bàn rà soát, không khẳng định đã họp hoặc cài cổng. |
+| 4 | 2.7, B7.2 | Đã viết hai bước chống chỉnh theo bộ chấm: dùng bộ nền cho phát triển/regression, giữ mốc prepared trước khi xem thẻ và giữ test ẩn độc lập. |
+| 5 | 2.8, B7.3 | Đã phát biểu tính chất, soạn hai ticket mới trên O-1002/C-02 và O-1004/C-04, có lệnh adhoc/seed và kết quả mong đợi theo tracking. Chờ ký tiêu chí để chạy thực tế; chưa kết luận đạt. |
+| 6 | 3.0, nhận thẻ/C0 | Chờ số thẻ S1–S8 được giao, tiêu chí đã ký/commit/push và bản chốt vòng 1. Chưa lấy thẻ hoặc chạy grade; không tự chọn số thẻ. |
+| 7 | 3.1, C2 | Đã ghi cách chọn hai lỗi có nguồn khác nhau từ report và dò đúng seed; chưa có thẻ/report để điền bằng chứng. Không dùng hai hậu quả cùng nguồn ở B2 thay cho yêu cầu của C2. |
+| 8 | 3.6, monitors/C8 | Đã cài và đăng ký `model_override_rate`, điền đủ thước đo → dữ liệu → cách tính, cảnh báo và điểm mù. Đã kiểm thử sự kiện tổng hợp; cần thẻ thật của nhóm để xác nhận metric phân biệt thẻ với bộ nền hoặc bổ sung tín hiệu đúng thẻ. |
+| 9 | 3.7, C9 | Đã ghi rõ điều kiện hoàn tất và giới hạn của monitor; chờ cây trước C6, các sửa đổi C7 và report after. Chưa khẳng định cổng đã ngăn nhánh nào khi `guards.py` còn mặc định. |
+| 10 | submission.json | Đã điền tên repo và đủ bốn thành viên theo bảng TEAM. `incident` chờ số thẻ; v1/v2 và ba dòng bắt buộc chờ TV3 chốt ở B8/C12 để sao chép nguyên văn, không quyết định thay nhóm. |
+
+**Phụ thuộc còn thiếu:** TV3 hoàn tất tiêu chí, ký/commit/push trước khi đo; TV1 hoàn tất/chốt cổng vòng 1 và C6; nhóm cung cấp số thẻ chính xác; TV1/TV3/TV4 ghi sửa đổi C7 và quyết định B8/C12. Khi có đủ, TV2 chạy trace/adhoc, nhận đúng thẻ, grade lần đầu trước khi sửa theo thẻ, phân tích C2, kiểm monitor, hoàn tất C9 và sao chép các trường còn lại vào submission.json.
+
+**Sử dụng AI:** Có dùng Codex hỗ trợ đọc project, đối chiếu dữ kiện, soạn phần phiếu TV2, cài monitor và kiểm tra. Không dùng dữ liệu/tài liệu bên ngoài; phần B2 dẫn code, dữ liệu và trace mẫu trong chính repo. Các ngưỡng kinh doanh/vận hành, chữ ký tiêu chí và quyết định của nhóm vẫn cần người được phân công chốt.
 
 ### Bằng chứng
 
-Mã commit, mã lần chạy (`runs/<mã>`), dòng trong phiếu.
+- `templates/form-a-criteria.md`: A4, hai câu ranh giới đầu ra.
+- `templates/form-b-evaluation-gates.md`: B2, B6, B7.2 và B7.3; phân biệt rõ phân tích tĩnh, kết quả mong đợi và dữ liệu chưa đo.
+- `lab10/monitors.py`: hàm `model_override_rate` và đăng ký trong `MONITORS`; `templates/form-c-incident.md`: C8 giải thích công thức, C0/C2/C9 ghi phụ thuộc chưa có.
+- `submission/submission.json`: `team` và bốn `members` khớp bảng thành viên; các trường chưa có nguồn được giữ trống đúng kiểu JSON.
+- Chưa tạo commit hoặc mã lần chạy eval/grade; chưa có `runs/journal.jsonl`. Không dùng output mẫu làm mã lần chạy của nhóm.
+- Kiểm tra ngày **19/11/2026 (GMT+7)**: `python -B -X utf8 -m unittest discover -s tests -v` → **13/13 tests OK**. Đây là bộ kiểm tra cài đặt/regression công khai được hướng dẫn chạy ở CP1, không phải report eval/grade của nhóm.
+- Kiểm thử monitor trực tiếp bằng sự kiện tổng hợp trong bộ nhớ: **9 ca đạt** (batch rỗng; thiếu events; batch hỗn hợp trả 0.5; retry chỉ tính một trial; độ trễ bằng nhau; độ trễ DB bằng 0; sự kiện thiếu giá trị; sự kiện khác loại/trường; trial đã chuyển người). Kiểm thêm không đổi dữ liệu đầu vào và không phụ thuộc nhãn, `pass`, mã ticket hay seed; tất cả đạt.
+- Kiểm JSON: tên repo, đủ bốn `members`/MSSV và mục cá nhân tương ứng đều khớp; các trường thẻ/quyết định/ba dòng chưa có nguồn vẫn để trống. Các lệnh Python dùng `-B` và kiểm tra trong bộ nhớ, không tạo file test phụ hoặc bytecode.
+- Kiểm phạm vi: chỉ sáu file có thay đổi nội dung; các mục cá nhân khác và các mục phiếu giao cho TV1/TV3/TV4 giữ nguyên. `git diff --check` không báo lỗi; không có file mới.
+- Khắc phục môi trường Windows: checkout ban đầu dùng `core.autocrlf=true`, làm 19 file khóa có xuống dòng CRLF khác hash. Đã xác minh từng file chỉ khác xuống dòng, khôi phục đúng byte LF từ HEAD có hash trùng MANIFEST và đặt riêng repo `core.autocrlf=input`. Cả **19/19 file khóa hiện có khớp hash**, không thay nội dung, không có thay đổi nào được stage/commit. Đây là kiểm hash file, chưa phải kết quả grade cho thẻ.
 
 ### Exit ticket
 
-Một điều học được, một điều còn chưa chắc.
+- **Điều học được:** Một lần thay dữ kiện DB bằng lời khách có thể tạo cả chi tiền sai lẫn lỗi oan cho bên thứ ba; pass_rate cao và việc tool báo thành công chưa đủ chứng minh an toàn. Monitor phát hiện sự kiện không tự bảo đảm chặn tác hại.
+- **Điều còn chưa chắc:** Chưa biết thẻ nhóm được giao và chưa có dữ liệu ba mốc nên chưa thể kết luận monitor hiện tại bắt được sự cố của nhóm hay các cổng sửa xong đã loại được nhánh nào; cần đo và kiểm lại sau khi đủ đầu vào, kể cả trong pilot thật.
 
 ## NguyenVanHieu-2A202603746
 
