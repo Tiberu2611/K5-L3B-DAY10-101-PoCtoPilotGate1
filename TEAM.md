@@ -224,12 +224,27 @@ Vai: **Vận hành và pháp lý** (TV4), trưởng nhóm. File: `config/operati
 
 ### Đóng góp cụ thể
 
-...
+Người thực hiện: **Nguyễn Lê Trọng Mạnh — 2A202603857**, thành viên 4, vai Vận hành và pháp lý, trưởng nhóm.
+
+| # | Đầu việc TV4 | Phần đã thực hiện và trạng thái |
+|--:|---|---|
+| 1 | 1.2, A1 | Đã viết hai mục tiêu. **Chị Oanh:** cuối tuần khớp sổ với hãng và shop mà không phải tra ngược hay đảo bút toán nào do trợ lý ghi: đúng số tiền, đúng `payer`, có căn cứ, mỗi lỗi hãng đúng hãng, đúng kiện, có nguyên nhân. **Chị Hạnh:** ca chuyển sang vừa sức một ca trực (1 người, 6 ca/giờ), được nhận trong 60 phút, không ùn, có ghi chú giải thích; không dùng phê duyệt mang tên chị khi đã hết hạn, đã dùng hoặc vượt `max_vnd`. Số liệu lấy từ `staff`, `ops_limits`, `ops_facts`, `carriers`, `staff_behavior` trong `data/world.json`. |
+| 2 | Soát tiêu chí (phút 60–65) | Đã soát `config/acceptance_criteria.json` theo góc vận hành và pháp lý: ba chỉ số an toàn bằng 0, `queue_stuck_max` = 0 khớp mục tiêu chị Hạnh, `escalation_rate_max` 0,35 trong sức một người duyệt, `cost_per_ticket_vnd_max` 8.500đ dưới mức làm tay 10.000đ, đủ `stop_condition` và bốn dòng `decision_rule`, không chép ngưỡng từ file example. |
+| 3 | 2.4, 2.10 (B4, B5, B7.5, B7.6) | Phiếu B mục B4, B5, B7.5, B7.6 và mục `operations`, `legal` trong `config/operating_gates.json` đã điền trước khi chốt vòng 1 (commit `96bed0e`, 15:49). |
+| 4 | Gộp bài vào `main` (trưởng nhóm) | Gộp nhánh `tv1-hai` vào `main` để đưa tiêu chí đã ký và bản chốt vòng 1 lên nhánh nộp. Xử lý xung đột: Phiếu A giữ ô 1.6(d) của TV2, Phiếu B giữ bản có trace thật của `tv1-hai`. Không sửa `acceptance_criteria.json`, `.lock` và các file `.round1`. |
+| 5 | Môi trường Windows | Phát hiện `core.autocrlf=true` làm file khoá và file tiêu chí trên đĩa đổi sang CRLF, lệch hash với MANIFEST và `.lock`. Đã tắt autocrlf cho repo, đưa file về LF; không đổi nội dung commit nào. Đổi email Git sang `2A202603857@example.com` theo RULES. |
+| 6–10 | 3.1 (C3, C4), 3.3 (C5), 3.5 (C7 phần vận hành), 3.7 (C11) | Chờ thẻ sự cố (phút 125). |
+
+**Sử dụng AI:** Có dùng Claude Code để đọc đề, dữ liệu mock và code; soạn nháp câu 1.2; soát ngưỡng tiêu chí; kiểm hash file khoá; hỗ trợ gộp nhánh và xử lý xung đột. Các con số dẫn trong phiếu đều lấy từ dữ liệu của repo; lựa chọn giữ bản nào khi xung đột do tôi quyết định.
 
 ### Bằng chứng
 
-Mã commit, mã lần chạy (`runs/<mã>`), dòng trong phiếu.
+- `templates/form-a-criteria.md`, mục A1, câu 1.2 — commit `8d4ecc5`.
+- Commit gộp `2f0628e` "Merge tv1-hai vào main: tiêu chí đã ký, chốt vòng 1, Phiếu A/B".
+- Kiểm sau khi gộp: `python -m lab10.criteria verify` không báo lỗi (hash `75be12e3…` khớp bản ký lúc 15:46:54); lịch sử còn commit `Sign acceptance criteria` (`1850257`, 15:47:02) và file tiêu chí không đổi từ đó; bản chốt vòng 1 khớp `config/round1.lock` (15:49:43); 19/19 file khoá khớp `lab10/MANIFEST.json`; `python -m unittest discover -s tests` → 13 tests OK.
+- Chưa có mã lần chạy `eval`/`grade` của riêng TV4 (vòng 2 chưa bắt đầu).
 
 ### Exit ticket
 
-Một điều học được, một điều còn chưa chắc.
+- **Điều học được:** Tiêu chí phải ký trước khi xem số, và "đã ký" chỉ có giá trị khi đúng từng byte: một lần đổi xuống dòng CRLF hay một lần push đè nhánh cũng đủ làm bằng chứng ký mất hiệu lực, dù nội dung không ai sửa.
+- **Điều còn chưa chắc:** Sức một người duyệt (6 ca/giờ) có đủ khi lượng ticket tăng ở giờ cao điểm hay khi mở rộng ra nhiều depot không; cần đo lại hàng chờ thật trong pilot.
