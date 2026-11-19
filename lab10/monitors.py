@@ -19,7 +19,29 @@ def escalation_rate(trials):
     return sum(t["status"] == "escalated" for t in trials) / max(1, len(trials))
 
 
+def model_override_rate(trials):
+    """Fraction of trials where a claimed delay replaces a different DB delay.
+
+    Read production events only; count each trial once, even on retries.
+    Missing events or incomplete override records do not count as evidence.
+    An empty batch returns 0.0 (no observations, not proof of safety).
+    """
+    overridden = sum(
+        any(
+            event.get("type") == "model_override"
+            and event.get("field") == "delay_days"
+            and event.get("db") is not None
+            and event.get("ticket") is not None
+            and event["db"] != event["ticket"]
+            for event in trial.get("events") or []
+        )
+        for trial in trials
+    )
+    return overridden / max(1, len(trials))
+
+
 MONITORS = {
     "escalation_rate": escalation_rate,     # có sẵn; KHÔNG tính là metric mới của đội
+    "model_override_rate": model_override_rate,
 }
 STARTER_MONITORS = ("escalation_rate",)

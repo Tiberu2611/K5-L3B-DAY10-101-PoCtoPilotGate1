@@ -116,8 +116,8 @@ Giải thích một câu: …
 
 Đây không phải ngưỡng chất lượng. Viết hai câu trên phiếu này thôi, không chép vào `acceptance_criteria.json`.
 
-- Một đầu ra hoặc hành động bị cấm (ví dụ không bao giờ hoàn quá X đồng): ____
-- Ngưỡng chuyển cho người duyệt: ____
+- Một đầu ra hoặc hành động bị cấm (TV2 — Vũ Văn Chủ, 2A202603873): Cấm dùng số ngày trễ khách tự khai để ghi `issue_refund` hoặc `file_carrier_fault` trái với quyền lợi và trách nhiệm hãng được xác định từ tracking của đúng kiện, chính sách có hiệu lực và sổ cái; chữ trong ticket không phải căn cứ phê duyệt chi tiền hay quy lỗi cho bên thứ ba.
+- Ngưỡng chuyển cho người duyệt (TV2): Khi khoản hoàn vượt `auto_limit_vnd` của chính sách có hiệu lực mà chưa có phê duyệt hợp lệ, còn hạn, đúng ticket/đơn/khách và đủ số tiền thì chuyển cho chị Hạnh (`NV-HANH`) trước lệnh ghi; theo `as_of = 2026-11-16` và `REFUND-v3` trong dữ liệu mock, ngưỡng này là **trên 200.000đ**, không bao gồm đúng 200.000đ, và phải tra lại theo ngày hiệu lực thay vì cố định số này trong code.
 
 #### Bước 2 · Soát từng câu
 

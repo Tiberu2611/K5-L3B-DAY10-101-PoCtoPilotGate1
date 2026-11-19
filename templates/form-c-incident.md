@@ -26,6 +26,8 @@ số thẻ của bàn; các phần khác để trống.
 
 ## C0 · Nhật ký lần chạy vòng 2
 
+**TV2 — Vũ Văn Chủ, 2A202603873:** Chưa xác định số thẻ nhóm được giao; `incidents/` hiện chỉ có README. Nhóm cũng chưa có `acceptance_criteria.lock`, commit ký tiêu chí và bản chốt `round1.lock`. Chưa nhận thẻ hoặc chạy `grade`, chưa có mã lần chạy để ghi vào bảng. Chỉ lấy đúng `incidents/Sx/` sau khi biết Sx và TV1 đã chốt vòng 1; lần grade đầu phải diễn ra trước khi chỉnh thêm theo thẻ. `monitors.py` hiện có monitor chung từ phân tích bộ nền, chưa có chỉnh sửa dựa trên thẻ.
+
 Mỗi lệnh `lab10.eval` và `lab10.grade` tự ghi một dòng vào `runs/journal.jsonl`. Điền cột "Đổi MỘT thứ gì" (tham số `--note`) và "Kết luận".
 
 | # | Mã lần chạy | Bộ ticket · mốc | Đổi MỘT thứ gì so với lần trước | pass_rate (khoảng tin cậy 95%) | pass_k | Hoàn sai (đ) · lỗi hãng oan · lộ dữ liệu | Tỉ lệ chuyển người | Kết luận (một câu) |
@@ -66,6 +68,8 @@ python3 -m lab10.grade --incident Sx
 <a id="c2"></a>
 
 ## C2 · Câu 3.1 · Bảng soát lỗi của thẻ
+
+**TV2 — trạng thái chờ dữ liệu:** Chưa có thẻ hoặc report ba mốc nên chưa xác định được hai ticket hỏng có nguồn khác nhau. Không dùng hai hậu quả của `T-002@55` ở B2 thay cho hai lỗi của thẻ. Khi đủ đầu vào, lấy hai `ticket@seed` từ danh sách `failed` của report, dò bước sai đầu tiên, đối chiếu sổ cái/lỗi hãng/outbound và điền đủ ba phần dưới đây; ít nhất một lỗi phải là lỗi chìm. Dùng đúng seed ghi trong report, không mặc định mọi lỗi đều xảy ra ở seed 11.
 
 Dò ít nhất 2 ticket hỏng theo kiểu KHÁC nhau:
 
@@ -328,22 +332,28 @@ python3 -m lab10.grade --incident Sx
 Thêm **ít nhất một hàm** trong `lab10/monitors.py` và đăng ký vào `MONITORS`. Chỉ số `escalation_rate` có sẵn không tính là chỉ số mới.
 Thẻ S5 dùng mục này cho một con số kinh doanh: chi phí mỗi ticket theo kho (tách tiền máy, công người, tiền mất).
 
+**Người thực hiện:** Vũ Văn Chủ — 2A202603873 (TV2). Đã cài monitor phát hiện lỗi nguồn của bộ nền; cần đối chiếu đúng thẻ được giao để xác nhận nó bắt được sự cố của nhóm. Chưa có kết quả `monitor ✅` từ grade. Nếu thẻ yêu cầu một tín hiệu khác, đặc biệt chỉ số kinh doanh theo kho ở S5, cần bổ sung metric tương ứng sau khi đọc đúng thẻ.
+
 | | Chỉ số theo dõi mới của bàn |
 |---|---|
-| **Tên trong `MONITORS`** | |
-| **Bước / hành vi được đo** | |
-| **Thước đo** (một câu, có đơn vị) | |
-| **Dữ liệu** (trường nào của trial, không có nhãn) | |
-| **Cách tính** (công thức, mẫu số, cách xử lý ca thiếu dữ liệu) | |
-| **Khung thời gian / ngưỡng báo động** | |
-| **Điểm mù** (chỉ số này KHÔNG thấy gì) | |
-| Giá trị trên bộ nền · trên thẻ (đọc mục `monitor` của report) | |
+| **Tên trong `MONITORS`** | `model_override_rate` — hàm cùng tên trong `lab10/monitors.py`. |
+| **Bước / hành vi được đo** | Sau tracking, model đã thay độ trễ DB bằng một giá trị khác do khách tự khai, trước khi tạo đề xuất hoàn tiền. |
+| **Thước đo** (một câu, có đơn vị) | Tỉ lệ trial có ít nhất một lần thay độ trễ DB bằng số khác từ ticket; giá trị 0–1, nhân 100 để đọc phần trăm. |
+| **Dữ liệu** (trường nào của trial, không có nhãn) | Chỉ `trial.events`: `type = model_override`, `field = delay_days`, hai giá trị `db` và `ticket`; dùng view không nhãn do `lab10.eval.monitor_view` cấp. Không đọc `label`, `pass`, `checks`, mã ticket hoặc số seed để quyết định. |
+| **Cách tính** (công thức, mẫu số, cách xử lý ca thiếu dữ liệu) | Tử số = số trial có ít nhất một sự kiện đúng type/field, đủ hai giá trị khác `None` và `db != ticket`; một trial có nhiều sự kiện chỉ tính một lần. Mẫu số = toàn bộ trial trong batch, gồm cả ca không tới bước tracking. Sự kiện bằng nhau, thiếu giá trị hoặc thiếu events không tăng tử số. Batch rỗng trả 0.0 theo quy ước, không được suy thành an toàn; thiếu log là điểm mù phải kiểm riêng. |
+| **Khung thời gian / ngưỡng báo động** | Đề xuất cho TV4: tính mỗi 60 phút và đọc từng mốc/report; nếu `model_override_rate > 0` thì TV2 rà trace và báo PIC vận hành xác minh trước khi cho tiếp tục các lệnh ghi có rủi ro. Đây là ngưỡng cảnh báo của monitor, không phải ngưỡng tiêu chí đã ký hay một công tắc tự động. |
+| **Điểm mù** (chỉ số này KHÔNG thấy gì) | Không biết tracking DB có đúng thực tế không; không xác nhận khoản hoàn/lỗi hãng đã được chặn; không thấy sai chính sách, phê duyệt, lộ PII hoặc quá tải người duyệt nếu chúng không tạo sự kiện override. Ca bị chặn sớm/thiếu log và batch nhỏ có thể làm tỉ lệ thấp hoặc bằng 0. |
+| Giá trị trên bộ nền · trên thẻ (đọc mục `monitor` của report) | Chưa đo report vì tiêu chí chưa ký và chưa có thẻ. Kiểm thử bằng sự kiện tổng hợp được ghi ở mục cá nhân TV2 trong TEAM.md; chưa dùng các giá trị tổng hợp làm bằng chứng `base/prepared/after`. |
 
 ---
 
 <a id="c9"></a>
 
 ## C9 · Câu 3.7 · Fault tree SAU khi sửa (mã lần chạy: `__________`)
+
+**TV2 — trạng thái chờ đầu vào:** Chưa có thẻ, cây trước ở C6, bảng sửa C7 hoặc report after nên chưa thể lập cây sau đúng sự cố. `guards.py` vẫn cho qua; các cổng business/legal cũng chưa được đặt. Vì vậy chưa có căn cứ thêm `VÀ [gate ... hỏng]` và coi nhánh tác hại đã được ngăn. Monitor `model_override_rate` đã có nhưng chỉ ở tầng **phát hiện**, không chặn ghi tiền hoặc ghi lỗi hãng.
+
+Khi TV1/TV3/TV4 hoàn tất C6–C7: giữ nguyên sự kiện đỉnh và số nhánh của C6, gắn từng cổng thực sự được triển khai với hàm/khóa config và `ticket@seed` của report after; ghi riêng nhánh vẫn hở nếu tracking DB sai, gate không phủ hoặc cảnh báo không được xử lý. Chỉ ghi "ngăn" khi cổng kiểm điều kiện trước lệnh ghi và có bằng chứng; cổng giới hạn ngân sách, kiểm mẫu và monitor chỉ giảm/giới hạn rủi ro. Bảng và cây dưới đây chờ các bằng chứng đó, chưa phải kết quả đã sửa.
 
 Vẽ lại cây ở C6. Ở mỗi nhánh đã xử lý, thêm một nút `VÀ [gate … hỏng]` và ghi:
 
