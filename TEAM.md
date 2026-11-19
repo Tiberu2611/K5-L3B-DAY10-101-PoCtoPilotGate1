@@ -13,10 +13,17 @@ Họ tên đầy đủ và MSSV của **mọi** thành viên; bàn 3 người th
 
 | STT | Họ và tên | MSSV | Vai | Trưởng nhóm |
 | --: | --------- | ---- | --- | :---------: |
+<<<<<<< Updated upstream
 |   1 |           |      |     |             |
 |   2 |           |      |     |             |
 |   3 |           |      |     |             |
 |   4 |           |      |     |             |
+=======
+|   1 | Nguyễn Đức Hải | 2A202603899 | Kỹ sư cổng (TV1) |             |
+|   2 | Vũ Văn Chủ  | 2A202603873 | Kỹ sư cổng (TV2) |             |
+|   3 | Nguyễn Văn Hiếu | 2A202603746 | Sản phẩm và kinh doanh (TV3) |             |
+|   4 | Nguyễn Lê Trọng Mạnh | 2A202603857 | Vận hành và pháp lý (TV4) | * |
+>>>>>>> Stashed changes
 
 Ghi `members` trong `submission/submission.json` theo dạng `"HoVaTen-MSSV"`, khớp bảng trên.
 
