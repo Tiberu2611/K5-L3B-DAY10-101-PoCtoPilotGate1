@@ -191,11 +191,13 @@ Vai: **Sản phẩm và kinh doanh** (TV3). File: `config/acceptance_criteria.js
 - Câu 1.1: viết mục tiêu cấp hệ thống cho trợ lý hoàn tiền giao trễ, dựa trên PRD v1.1 của Lab 9 (§3) và luồng ghi tiền, ghi lỗi hãng của Lab 10. Đã dùng AI để đọc yêu cầu và soát câu chữ.
 - Câu 1.4: thiết kế telemetry theo ca cho lỗi hãng thiếu căn cứ, dùng log ghi lỗi, tracking và chính sách; nêu công thức, ngưỡng báo động và điểm mù. Đã dùng AI để soát thước đo và cách tính.
 - Câu 1.6: dự thảo ngưỡng chấp nhận, bốn quy tắc quyết định và điều kiện dừng từ dữ liệu vận hành của lab; chưa ký khi các mục Phiếu A của đồng đội còn trống. Đã dùng AI để soát câu chữ và cấu trúc JSON.
+- Câu 2.3: lập bản đồ nguồn dữ liệu và kịch bản đổi từ REFUND-v3 sang REFUND-v4 ngày 01/12/2026; chỉ rõ cờ phiên bản chậm cập nhật có thể gây lỗi hãng oan. Đã dùng AI để đối chiếu Phiếu B với dữ liệu mock và luồng chọn chính sách.
 
 ### Bằng chứng
 
 - `templates/form-a-criteria.md`, mục A1, câu 1.1. Mã commit bổ sung khi bàn lưu phần việc lên repo.
 - `templates/form-a-criteria.md`, mục A2 cột Telemetry production và mục A4; `config/acceptance_criteria.json` (bản dự thảo, chưa có `.lock`).
+- `templates/form-b-evaluation-gates.md`, mục B3; đối chiếu `data/world.json` mục `policies`, `orders[].parcels` và `lab10/agent.py` phần chọn chính sách. Đây là phân tích kịch bản, chưa phải kết quả eval.
 
 ### Exit ticket
 
