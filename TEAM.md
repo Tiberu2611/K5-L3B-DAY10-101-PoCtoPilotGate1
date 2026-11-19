@@ -120,11 +120,14 @@ Vai: **Sản phẩm và kinh doanh**. File: `config/acceptance_criteria.json`, `
 
 ### Đóng góp cụ thể
 
-...
+- Câu 1.1: viết mục tiêu cấp hệ thống cho trợ lý hoàn tiền giao trễ, dựa trên PRD v1.1 của Lab 9 (§3) và luồng ghi tiền, ghi lỗi hãng của Lab 10. Đã dùng AI để đọc yêu cầu và soát câu chữ.
+- Câu 1.4: thiết kế telemetry theo ca cho lỗi hãng thiếu căn cứ, dùng log ghi lỗi, tracking và chính sách; nêu công thức, ngưỡng báo động và điểm mù. Đã dùng AI để soát thước đo và cách tính.
+- Câu 1.6: dự thảo ngưỡng chấp nhận, bốn quy tắc quyết định và điều kiện dừng từ dữ liệu vận hành của lab; chưa ký khi các mục Phiếu A của đồng đội còn trống. Đã dùng AI để soát câu chữ và cấu trúc JSON.
 
 ### Bằng chứng
 
-Mã commit, mã lần chạy (`runs/<mã>`), dòng trong phiếu.
+- `templates/form-a-criteria.md`, mục A1, câu 1.1. Mã commit bổ sung khi bàn lưu phần việc lên repo.
+- `templates/form-a-criteria.md`, mục A2 cột Telemetry production và mục A4; `config/acceptance_criteria.json` (bản dự thảo, chưa có `.lock`).
 
 ### Exit ticket
 
