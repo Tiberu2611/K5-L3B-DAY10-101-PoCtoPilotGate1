@@ -192,18 +192,18 @@ Vai: **Sản phẩm và kinh doanh** (TV3). File: `config/acceptance_criteria.js
 - Câu 1.4: thiết kế telemetry theo ca cho lỗi hãng thiếu căn cứ, dùng log ghi lỗi, tracking và chính sách; nêu công thức, ngưỡng báo động và điểm mù. Đã dùng AI để soát thước đo và cách tính.
 - Câu 1.6: dự thảo ngưỡng chấp nhận, bốn quy tắc quyết định và điều kiện dừng từ dữ liệu vận hành của lab. Lúc dự thảo, các mục Phiếu A của đồng đội còn trống nên chưa ký; sau khi bàn bổ sung, TV1 ký tiêu chí lúc 15:46:54 ngày 19/11/2026 rồi tạo commit `1850257`. Tôi đã kiểm tra hash JSON khớp `acceptance_criteria.lock`; không sửa tiêu chí sau khi ký. Đã dùng AI để soát câu chữ và cấu trúc JSON.
 - Câu 2.3: tôi lập bản đồ nguồn dữ liệu và kịch bản đổi từ REFUND-v3 sang REFUND-v4 ngày 01/12/2026 trong commit `a76a77e`. Bản Phiếu B cuối do nhánh `tv1-hai` điền cùng chủ đề, được giữ nguyên khi gộp để bảo toàn bản chốt vòng 1; không nhận bản cuối là phần tôi tự viết. Đã dùng AI để đối chiếu dữ liệu mock và luồng chọn chính sách.
-- Câu 2.9 và quyết định v1: B7.4, `business` và B8 đã có trong commit nhóm `96bed0e`. Tôi đã đối chiếu tĩnh các khóa với ngưỡng đã ký và `ops_limits`, `ops_facts`; chưa có `runs/` trong checkout để kiểm độc lập các con số report ghi ở B8. Không nhận các mục này là phần tôi tự điền.
+- Câu 2.9 và quyết định v1: B7.4, `business` và B8 đã có trong commit nhóm `96bed0e`. Tôi đã đối chiếu các khóa với ngưỡng đã ký và `ops_limits`, `ops_facts`, rồi chạy lại bộ nền mốc prepared để xác nhận các số v1 chính. Không nhận các mục này là phần tôi tự điền.
 
 ### Bằng chứng
 
 - Commit `fcd424a`: `templates/form-a-criteria.md` mục A1 câu 1.1, A2 cột Telemetry production, A4; `config/acceptance_criteria.json` trước ký. Commit ký `1850257` và `config/acceptance_criteria.lock` nằm trong lịch sử chung.
 - Commit `a76a77e`: bản nháp B3; bản nhóm hiện ở `templates/form-b-evaluation-gates.md` mục B3. Đối chiếu với `data/world.json` phần `policies`, `orders[].parcels` và `lab10/agent.py` phần chọn chính sách; đây là kịch bản drift, không phải kết quả eval.
-- Phiếu B mục B7.4, B8 và `config/operating_gates.json` phần `business` là bằng chứng nội dung vòng 1 của nhóm; cần report trong `runs/` để kiểm lại số đo khi gom bài.
+- Phiếu B mục B7.4, B8 và `config/operating_gates.json` phần `business` là nội dung vòng 1 của nhóm. Lần kiểm độc lập `R-base-prepared-20261119-162844-fd4774` (report local trong `runs/`, chưa gom bài) cho 110 trial: pass_rate = 1,0; pass_k = 1,0; hoàn sai, lỗi hãng oan, lộ PII đều 0; chi phí 4.456đ/ticket; ROI 1,24; 0 ca ùn. `lab10.gate` báo mọi ngưỡng đã ký đều đạt. Report gốc của mốc base trong B8 vẫn cần nhóm cung cấp khi gom bài.
 
 ### Exit ticket
 
 - **Điều học được:** Ngày hiệu lực của chính sách mới là căn cứ chọn phiên bản; cờ `index_active` có thể chậm cập nhật và làm cùng tracking sinh ra quyết định tiền hoặc lỗi hãng sai.
-- **Điều còn chưa chắc:** Chưa có thẻ sự cố được Lab Coach xác nhận và chưa có artefact `runs/` trong checkout, nên chưa thể kết luận v1 chịu được sự cố hay ra quyết định v2. Cần đo ba mốc và đối soát chi phí, hàng chờ trên dữ liệu pilot thật.
+- **Điều còn chưa chắc:** Chưa có thẻ sự cố được Lab Coach xác nhận và chưa có report ba mốc của thẻ, nên chưa thể kết luận v1 chịu được sự cố hay ra quyết định v2. Cần đo trên đúng thẻ và đối soát chi phí, hàng chờ trên dữ liệu pilot thật.
 
 ## NguyenLeTrongManh-2A202603857
 
